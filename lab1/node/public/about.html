@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Про роботу та автора</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <a class="skip" href="#content">Перейти до вмісту</a>
+  <div class="page">
+    <header>
+      <a class="brand" href="/">Веб / 01</a>
+      <nav aria-label="Основна навігація">
+        <a href="/">Головна</a>
+        <a href="/about" aria-current="page">Про роботу</a>
+      </nav>
+    </header>
+    <main id="content">
+      <p class="eyebrow">Знайомство</p>
+      <h1>Про роботу та автора</h1>
+      <p class="lead">Досліджую, як сервер перетворює HTTP-запит на сторінку в браузері.</p><div class="card"><h2>Виконавець</h2><dl><div><dt>ПІБ</dt><dd>Пригарін Богдан Сергійович</dd></div><div><dt>Група</dt><dd>6.1224</dd></div><div><dt>Середовище</dt><dd>Node.js v26.7.0</dd></div></dl><h2>Моя реалізація</h2>
+      <p>Сервер на Node.js використовує вбудовані модулі <code>http</code>, <code>fs</code> та <code>path</code>. Запит парситься за допомогою <code>URL</code> об'єкта для отримання чистого шляху (без урахування query-параметрів). Зіставлення маршрутів визначає, який файл із папки <code>public</code> (<code>index.html</code>, <code>about.html</code> або <code>404.html</code>) слід прочитати через <code>fs.readFile</code> та повернути із відповідним статус-кодом (200 або 404) та заголовком <code>Content-Type</code> (<code>text/html; charset=utf-8</code> або <code>text/css; charset=utf-8</code>).</p></div>
+    </main>
+    <footer>
+      <span>Пригарін Богдан Сергійович · Група 6.1224</span>
+      <span>Середовище: Node.js v26.7.0</span>
+    </footer>
+  </div>
+</body>
+</html>
