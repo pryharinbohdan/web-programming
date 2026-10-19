@@ -1,0 +1,106 @@
+<details
+    class="notification-menu"
+    data-component="notification-center"
+    data-endpoint="/api/notifications"
+>
+    <summary
+        class="notification-menu__trigger"
+        aria-label="Відкрити сповіщення"
+    >
+        <svg
+            class="notification-menu__icon"
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            aria-hidden="true"
+        >
+            <path
+                d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+            />
+        </svg>
+        <span
+            class="notification-menu__badge"
+            data-notification-count
+            aria-label="1 нове сповіщення"
+        >
+            1
+        </span>
+    </summary>
+
+    <div class="notification-menu__panel">
+        <div class="notification-menu__header">
+            <div>
+                <p class="notification-menu__eyebrow">Останні події</p>
+                <h2 class="notification-menu__title">Сповіщення</h2>
+            </div>
+            <button
+                class="notification-menu__clear"
+                type="button"
+                data-action="mark-all-read"
+            >
+                Прочитати всі
+            </button>
+        </div>
+
+        <ul
+            class="notification-menu__list"
+            data-notification-list
+            aria-live="polite"
+        >
+            <li
+                class="notification-menu__item notification-menu__item--unread"
+                data-notification-id="demo-request"
+                data-event="request.received"
+            >
+                <span class="notification-menu__dot" aria-hidden="true"></span>
+                <div>
+                    <strong>Заявку прийнято</strong>
+                    <p>Ми отримали ваше звернення.</p>
+                    <time datetime="2026-09-26T08:00:00">щойно</time>
+                </div>
+                <button
+                    class="notification-menu__read"
+                    type="button"
+                    data-action="mark-read"
+                    aria-label="Позначити сповіщення як прочитане"
+                >
+                    ✓
+                </button>
+            </li>
+
+            <li
+                class="notification-menu__item"
+                data-notification-id="demo-offer"
+                data-event="offer.updated"
+            >
+                <span class="notification-menu__dot" aria-hidden="true"></span>
+                <div>
+                    <strong>Пропозицію оновлено</strong>
+                    <p>Змінилися умови або доступність.</p>
+                    <time datetime="2026-09-26T07:48:00">12 хв тому</time>
+                </div>
+                <button
+                    class="notification-menu__read"
+                    type="button"
+                    data-action="mark-read"
+                    aria-label="Позначити сповіщення як прочитане"
+                >
+                    ✓
+                </button>
+            </li>
+
+            <li
+                class="notification-menu__empty"
+                data-notification-empty
+                hidden
+            >
+                Нових сповіщень немає.
+            </li>
+        </ul>
+    </div>
+</details>
