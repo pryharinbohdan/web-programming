@@ -1,0 +1,792 @@
+{
+  "info": {
+    "name": "Lab 3 — Catalog API",
+    "description": "Лабораторна робота №3. Перевірки JSON API каталогу (успіх, валідація 422, 404).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "known_slug",
+      "value": ""
+    },
+    {
+      "key": "category",
+      "value": ""
+    },
+    {
+      "key": "operation",
+      "value": ""
+    },
+    {
+      "key": "search",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Список каталогу",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Статус 200', () => {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Формат JSON', () => {",
+              "  pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "const body = pm.response.json();",
+              "pm.test('Перші 9 продуктів із 12', () => {",
+              "  pm.expect(body.data).to.be.an('array').with.lengthOf(9);",
+              "  pm.expect(body.meta.total).to.eql(12);",
+              "});",
+              "pm.test('Є links і meta', () => {",
+              "  pm.expect(body).to.have.property('links');",
+              "  pm.expect(body.meta).to.have.property('current_page', 1);",
+              "});",
+              "const product = body.data[0];",
+              "pm.collectionVariables.set('known_slug', product.slug);",
+              "pm.collectionVariables.set('category', product.category);",
+              "pm.collectionVariables.set('operation', product.operation);",
+              "pm.collectionVariables.set('search', product.title);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/catalog",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "catalog"
+          ],
+          "query": []
+        }
+      }
+    },
+    {
+      "name": "02 Продукт за slug",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Статус 200', () => {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Формат JSON', () => {",
+              "  pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "const p = pm.response.json().data;",
+              "pm.test('Той самий slug, назва, ціна й категорія', () => {",
+              "  pm.expect(p.slug).to.eql(pm.collectionVariables.get('known_slug'));",
+              "  pm.expect(p.title).to.eql(pm.collectionVariables.get('search'));",
+              "  pm.expect(p.price).to.match(/^\\d+\\.\\d{2}$/);",
+              "  pm.expect(p.category).to.eql(pm.collectionVariables.get('category'));",
+              "  pm.expect(p.published_at).to.match(/^\\d{4}-\\d{2}-\\d{2}$/);",
+              "  pm.expect(p.attributes).to.be.an('object');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/catalog/{{known_slug}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "catalog",
+            "{{known_slug}}"
+          ],
+          "query": []
+        }
+      }
+    },
+    {
+      "name": "03 Пошук за назвою",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Статус 200', () => {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Формат JSON', () => {",
+              "  pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "const body = pm.response.json();",
+              "pm.test('Знайдено продукт зі збереженою назвою', () => {",
+              "  pm.expect(body.data.length).to.be.above(0);",
+              "  pm.expect(body.data.map(p => p.title)).to.include(pm.collectionVariables.get('search'));",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/catalog?q={{search}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "catalog"
+          ],
+          "query": [
+            {
+              "key": "q",
+              "value": "{{search}}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "04 Категорія і спосіб угоди",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Статус 200', () => {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Формат JSON', () => {",
+              "  pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "const body = pm.response.json();",
+              "pm.test('Кожен результат відповідає обом фільтрам', () => {",
+              "  pm.expect(body.data.length).to.be.above(0);",
+              "  body.data.forEach(p => {",
+              "    pm.expect(p.category).to.eql(pm.collectionVariables.get('category'));",
+              "    pm.expect(p.operation).to.eql(pm.collectionVariables.get('operation'));",
+              "  });",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/catalog?category={{category}}&operation={{operation}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "catalog"
+          ],
+          "query": [
+            {
+              "key": "category",
+              "value": "{{category}}"
+            },
+            {
+              "key": "operation",
+              "value": "{{operation}}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "05 Сортування: ціна зростає",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Статус 200', () => {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Формат JSON', () => {",
+              "  pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "const body = pm.response.json();",
+              "pm.test('12 продуктів за неспаданням ціни', () => {",
+              "  pm.expect(body.data).to.have.lengthOf(12);",
+              "  const prices = body.data.map(p => parseFloat(p.price));",
+              "  for (let i = 1; i < prices.length; i++) {",
+              "    pm.expect(prices[i]).to.be.at.least(prices[i - 1]);",
+              "  }",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/catalog?sort=price_asc&per_page=12",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "catalog"
+          ],
+          "query": [
+            {
+              "key": "sort",
+              "value": "price_asc"
+            },
+            {
+              "key": "per_page",
+              "value": "12"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "06 Сортування: ціна спадає",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Статус 200', () => {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Формат JSON', () => {",
+              "  pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "const body = pm.response.json();",
+              "pm.test('12 продуктів за незростанням ціни', () => {",
+              "  pm.expect(body.data).to.have.lengthOf(12);",
+              "  const prices = body.data.map(p => parseFloat(p.price));",
+              "  for (let i = 1; i < prices.length; i++) {",
+              "    pm.expect(prices[i]).to.be.at.most(prices[i - 1]);",
+              "  }",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/catalog?sort=price_desc&per_page=12",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "catalog"
+          ],
+          "query": [
+            {
+              "key": "sort",
+              "value": "price_desc"
+            },
+            {
+              "key": "per_page",
+              "value": "12"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "07 Друга сторінка",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Статус 200', () => {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Формат JSON', () => {",
+              "  pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "const body = pm.response.json();",
+              "pm.test('Друга сторінка: 3 продукти, збережений порядок', () => {",
+              "  pm.expect(body.meta.current_page).to.eql(2);",
+              "  pm.expect(body.data).to.have.lengthOf(3);",
+              "  pm.expect(body.links.prev).to.not.be.null;",
+              "  const dates = body.data.map(p => p.published_at);",
+              "  for (let i = 1; i < dates.length; i++) {",
+              "    pm.expect(dates[i] <= dates[i - 1]).to.be.true;",
+              "  }",
+              "  pm.expect(body.data.map(p => p.slug)).to.not.include(pm.collectionVariables.get('known_slug'));",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/catalog?page=2",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "catalog"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "2"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "08 Порожній результат",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Статус 200', () => {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Формат JSON', () => {",
+              "  pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "const body = pm.response.json();",
+              "pm.test('Порожній data, meta.total = 0', () => {",
+              "  pm.expect(body.data).to.be.an('array').that.is.empty;",
+              "  pm.expect(body.meta.total).to.eql(0);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/catalog?q=absent-lab3-product",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "catalog"
+          ],
+          "query": [
+            {
+              "key": "q",
+              "value": "absent-lab3-product"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "09 Некоректне сортування (422)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Статус 422', () => {",
+              "  pm.response.to.have.status(422);",
+              "});",
+              "pm.test('Формат JSON', () => {",
+              "  pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "const body = pm.response.json();",
+              "pm.test('Повідомлення в errors.sort', () => {",
+              "  pm.expect(body.message).to.be.a('string');",
+              "  pm.expect(body.errors).to.have.property('sort');",
+              "  pm.expect(body.errors.sort).to.be.an('array').that.is.not.empty;",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/catalog?sort=invalid",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "catalog"
+          ],
+          "query": [
+            {
+              "key": "sort",
+              "value": "invalid"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "10 Некоректна сторінка (422)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Статус 422', () => {",
+              "  pm.response.to.have.status(422);",
+              "});",
+              "pm.test('Формат JSON', () => {",
+              "  pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "const body = pm.response.json();",
+              "pm.test('Повідомлення в errors.page', () => {",
+              "  pm.expect(body.message).to.be.a('string');",
+              "  pm.expect(body.errors).to.have.property('page');",
+              "  pm.expect(body.errors.page).to.be.an('array').that.is.not.empty;",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/catalog?page=0",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "catalog"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "0"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "11 Завелика кількість на сторінці (422)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Статус 422', () => {",
+              "  pm.response.to.have.status(422);",
+              "});",
+              "pm.test('Формат JSON', () => {",
+              "  pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "const body = pm.response.json();",
+              "pm.test('Повідомлення в errors.per_page', () => {",
+              "  pm.expect(body.message).to.be.a('string');",
+              "  pm.expect(body.errors).to.have.property('per_page');",
+              "  pm.expect(body.errors.per_page).to.be.an('array').that.is.not.empty;",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/catalog?per_page=10000",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "catalog"
+          ],
+          "query": [
+            {
+              "key": "per_page",
+              "value": "10000"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "12 Невідома категорія (422)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Статус 422', () => {",
+              "  pm.response.to.have.status(422);",
+              "});",
+              "pm.test('Формат JSON', () => {",
+              "  pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "const body = pm.response.json();",
+              "pm.test('Повідомлення в errors.category', () => {",
+              "  pm.expect(body.message).to.be.a('string');",
+              "  pm.expect(body.errors).to.have.property('category');",
+              "  pm.expect(body.errors.category).to.be.an('array').that.is.not.empty;",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/catalog?category=Unknown-category",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "catalog"
+          ],
+          "query": [
+            {
+              "key": "category",
+              "value": "Unknown-category"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "13 Занадто довгий пошук (422)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Статус 422', () => {",
+              "  pm.response.to.have.status(422);",
+              "});",
+              "pm.test('Формат JSON', () => {",
+              "  pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "const body = pm.response.json();",
+              "pm.test('Повідомлення в errors.q', () => {",
+              "  pm.expect(body.message).to.be.a('string');",
+              "  pm.expect(body.errors).to.have.property('q');",
+              "  pm.expect(body.errors.q).to.be.an('array').that.is.not.empty;",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/catalog?q=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "catalog"
+          ],
+          "query": [
+            {
+              "key": "q",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "14 Невідомий продукт (404)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Статус 404', () => {",
+              "  pm.response.to.have.status(404);",
+              "});",
+              "pm.test('Формат JSON', () => {",
+              "  pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "const body = pm.response.json();",
+              "pm.test('JSON-повідомлення про відсутній продукт', () => {",
+              "  pm.expect(body.message).to.be.a('string').and.not.empty;",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/catalog/missing-product",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "catalog",
+            "missing-product"
+          ],
+          "query": []
+        }
+      }
+    },
+    {
+      "name": "15 Невідомий API-маршрут (404)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Статус 404', () => {",
+              "  pm.response.to.have.status(404);",
+              "});",
+              "pm.test('Формат JSON', () => {",
+              "  pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "const body = pm.response.json();",
+              "pm.test('JSON-помилка невідомого маршруту', () => {",
+              "  pm.expect(body.message).to.be.a('string').and.not.empty;",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/missing/page",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "missing",
+            "page"
+          ],
+          "query": []
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,1343 @@
+api{
+api    "openapi": "3.1.2",
+api    "info": {
+api        "title": "\u041a\u0430\u0442\u0430\u043b\u043e\u0433 \u0442\u0435\u0445\u043d\u0456\u043a\u0438 \u2014 \u0414\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0430\u0446\u0456\u044f API",
+api        "version": "1.0.0",
+api        "description": "REST API \u043a\u0430\u0442\u0430\u043b\u043e\u0433\u0443 \u043a\u043e\u043c\u043f\u2019\u044e\u0442\u0435\u0440\u043d\u043e\u0457 \u0442\u0435\u0445\u043d\u0456\u043a\u0438 (\u0412\u0430\u0440\u0456\u0430\u043d\u0442 \u21169). \u0417\u0430\u0431\u0435\u0437\u043f\u0435\u0447\u0443\u0454 CRUD \u043e\u043f\u0435\u0440\u0430\u0446\u0456\u0457 \u0434\u043b\u044f \u0442\u043e\u0432\u0430\u0440\u0456\u0432 \u0442\u0430 \u043a\u0430\u0442\u0435\u0433\u043e\u0440\u0456\u0439."
+api    },
+api    "servers": [
+api        {
+api            "url": "http://localhost:8081/api"
+api        }
+api    ],
+api    "paths": {
+api        "/catalog": {
+api            "get": {
+api                "operationId": "catalog.index",
+api                "tags": [
+api                    "Catalog"
+api                ],
+api                "parameters": [
+api                    {
+api                        "name": "q",
+api                        "in": "query",
+api                        "schema": {
+api                            "type": [
+api                                "string",
+api                                "null"
+api                            ],
+api                            "maxLength": 100
+api                        }
+api                    },
+api                    {
+api                        "name": "category",
+api                        "in": "query",
+api                        "schema": {
+api                            "type": [
+api                                "string",
+api                                "null"
+api                            ]
+api                        }
+api                    },
+api                    {
+api                        "name": "operation",
+api                        "in": "query",
+api                        "schema": {
+api                            "type": [
+api                                "string",
+api                                "null"
+api                            ],
+api                            "enum": [
+api                                "\u041f\u0440\u043e\u0434\u0430\u0436",
+api                                null
+api                            ]
+api                        }
+api                    },
+api                    {
+api                        "name": "sort",
+api                        "in": "query",
+api                        "schema": {
+api                            "type": [
+api                                "string",
+api                                "null"
+api                            ],
+api                            "enum": [
+api                                "newest",
+api                                "price_asc",
+api                                "price_desc",
+api                                null
+api                            ]
+api                        }
+api                    },
+api                    {
+api                        "name": "page",
+api                        "in": "query",
+api                        "schema": {
+api                            "type": [
+api                                "integer",
+api                                "null"
+api                            ],
+api                            "minimum": 1
+api                        }
+api                    },
+api                    {
+api                        "name": "per_page",
+api                        "in": "query",
+api                        "schema": {
+api                            "type": [
+api                                "integer",
+api                                "null"
+api                            ],
+api                            "enum": [
+api                                "9",
+api                                "12",
+api                                "24",
+api                                null
+api                            ]
+api                        }
+api                    }
+api                ],
+api                "responses": {
+api                    "200": {
+api                        "description": "Paginated set of `ProductResource`",
+api                        "content": {
+api                            "application/json": {
+api                                "schema": {
+api                                    "type": "object",
+api                                    "properties": {
+api                                        "data": {
+api                                            "type": "array",
+api                                            "items": {
+api                                                "allOf": [
+api                                                    {
+api                                                        "$ref": "#/components/schemas/ProductResource"
+api                                                    },
+api                                                    {
+api                                                        "type": "object",
+api                                                        "required": [
+api                                                            "category_data"
+api                                                        ]
+api                                                    }
+api                                                ]
+api                                            }
+api                                        },
+api                                        "links": {
+api                                            "type": "object",
+api                                            "properties": {
+api                                                "first": {
+api                                                    "type": [
+api                                                        "string",
+api                                                        "null"
+api                                                    ]
+api                                                },
+api                                                "last": {
+api                                                    "type": [
+api                                                        "string",
+api                                                        "null"
+api                                                    ]
+api                                                },
+api                                                "prev": {
+api                                                    "type": [
+api                                                        "string",
+api                                                        "null"
+api                                                    ]
+api                                                },
+api                                                "next": {
+api                                                    "type": [
+api                                                        "string",
+api                                                        "null"
+api                                                    ]
+api                                                }
+api                                            },
+api                                            "required": [
+api                                                "first",
+api                                                "last",
+api                                                "prev",
+api                                                "next"
+api                                            ]
+api                                        },
+api                                        "meta": {
+api                                            "type": "object",
+api                                            "properties": {
+api                                                "current_page": {
+api                                                    "type": "integer",
+api                                                    "minimum": 1
+api                                                },
+api                                                "from": {
+api                                                    "type": [
+api                                                        "integer",
+api                                                        "null"
+api                                                    ],
+api                                                    "minimum": 1
+api                                                },
+api                                                "last_page": {
+api                                                    "type": "integer",
+api                                                    "minimum": 1
+api                                                },
+api                                                "links": {
+api                                                    "type": "array",
+api                                                    "description": "Generated paginator links.",
+api                                                    "items": {
+api                                                        "type": "object",
+api                                                        "properties": {
+api                                                            "url": {
+api                                                                "type": [
+api                                                                    "string",
+api                                                                    "null"
+api                                                                ]
+api                                                            },
+api                                                            "label": {
+api                                                                "type": "string"
+api                                                            },
+api                                                            "active": {
+api                                                                "type": "boolean"
+api                                                            }
+api                                                        },
+api                                                        "required": [
+api                                                            "url",
+api                                                            "label",
+api                                                            "active"
+api                                                        ]
+api                                                    }
+api                                                },
+api                                                "path": {
+api                                                    "type": [
+api                                                        "string",
+api                                                        "null"
+api                                                    ],
+api                                                    "description": "Base path for paginator generated URLs."
+api                                                },
+api                                                "per_page": {
+api                                                    "type": "integer",
+api                                                    "description": "Number of items shown per page.",
+api                                                    "minimum": 0
+api                                                },
+api                                                "to": {
+api                                                    "type": [
+api                                                        "integer",
+api                                                        "null"
+api                                                    ],
+api                                                    "description": "Number of the last item in the slice.",
+api                                                    "minimum": 1
+api                                                },
+api                                                "total": {
+api                                                    "type": "integer",
+api                                                    "description": "Total number of items being paginated.",
+api                                                    "minimum": 0
+api                                                }
+api                                            },
+api                                            "required": [
+api                                                "current_page",
+api                                                "from",
+api                                                "last_page",
+api                                                "links",
+api                                                "path",
+api                                                "per_page",
+api                                                "to",
+api                                                "total"
+api                                            ]
+api                                        }
+api                                    },
+api                                    "required": [
+api                                        "data",
+api                                        "links",
+api                                        "meta"
+api                                    ]
+api                                }
+api                            }
+api                        }
+api                    },
+api                    "422": {
+api                        "$ref": "#/components/responses/ValidationException"
+api                    }
+api                }
+api            }
+api        },
+api        "/catalog/{slug}": {
+api            "get": {
+api                "operationId": "catalog.show",
+api                "tags": [
+api                    "Catalog"
+api                ],
+api                "parameters": [
+api                    {
+api                        "name": "slug",
+api                        "in": "path",
+api                        "required": true,
+api                        "schema": {
+api                            "type": "string"
+api                        }
+api                    }
+api                ],
+api                "responses": {
+api                    "200": {
+api                        "description": "`ProductResource`",
+api                        "content": {
+api                            "application/json": {
+api                                "schema": {
+api                                    "type": "object",
+api                                    "properties": {
+api                                        "data": {
+api                                            "allOf": [
+api                                                {
+api                                                    "$ref": "#/components/schemas/ProductResource"
+api                                                },
+api                                                {
+api                                                    "type": "object",
+api                                                    "required": [
+api                                                        "category_data"
+api                                                    ]
+api                                                }
+api                                            ]
+api                                        }
+api                                    },
+api                                    "required": [
+api                                        "data"
+api                                    ]
+api                                }
+api                            }
+api                        }
+api                    }
+api                }
+api            }
+api        },
+api        "/categories": {
+api            "get": {
+api                "operationId": "categories.index",
+api                "tags": [
+api                    "Category"
+api                ],
+api                "responses": {
+api                    "200": {
+api                        "description": "Paginated set of `CategoryResource`",
+api                        "content": {
+api                            "application/json": {
+api                                "schema": {
+api                                    "type": "object",
+api                                    "properties": {
+api                                        "data": {
+api                                            "type": "array",
+api                                            "items": {
+api                                                "$ref": "#/components/schemas/CategoryResource"
+api                                            }
+api                                        },
+api                                        "links": {
+api                                            "type": "object",
+api                                            "properties": {
+api                                                "first": {
+api                                                    "type": [
+api                                                        "string",
+api                                                        "null"
+api                                                    ]
+api                                                },
+api                                                "last": {
+api                                                    "type": [
+api                                                        "string",
+api                                                        "null"
+api                                                    ]
+api                                                },
+api                                                "prev": {
+api                                                    "type": [
+api                                                        "string",
+api                                                        "null"
+api                                                    ]
+api                                                },
+api                                                "next": {
+api                                                    "type": [
+api                                                        "string",
+api                                                        "null"
+api                                                    ]
+api                                                }
+api                                            },
+api                                            "required": [
+api                                                "first",
+api                                                "last",
+api                                                "prev",
+api                                                "next"
+api                                            ]
+api                                        },
+api                                        "meta": {
+api                                            "type": "object",
+api                                            "properties": {
+api                                                "current_page": {
+api                                                    "type": "integer",
+api                                                    "minimum": 1
+api                                                },
+api                                                "from": {
+api                                                    "type": [
+api                                                        "integer",
+api                                                        "null"
+api                                                    ],
+api                                                    "minimum": 1
+api                                                },
+api                                                "last_page": {
+api                                                    "type": "integer",
+api                                                    "minimum": 1
+api                                                },
+api                                                "links": {
+api                                                    "type": "array",
+api                                                    "description": "Generated paginator links.",
+api                                                    "items": {
+api                                                        "type": "object",
+api                                                        "properties": {
+api                                                            "url": {
+api                                                                "type": [
+api                                                                    "string",
+api                                                                    "null"
+api                                                                ]
+api                                                            },
+api                                                            "label": {
+api                                                                "type": "string"
+api                                                            },
+api                                                            "active": {
+api                                                                "type": "boolean"
+api                                                            }
+api                                                        },
+api                                                        "required": [
+api                                                            "url",
+api                                                            "label",
+api                                                            "active"
+api                                                        ]
+api                                                    }
+api                                                },
+api                                                "path": {
+api                                                    "type": [
+api                                                        "string",
+api                                                        "null"
+api                                                    ],
+api                                                    "description": "Base path for paginator generated URLs."
+api                                                },
+api                                                "per_page": {
+api                                                    "type": "integer",
+api                                                    "description": "Number of items shown per page.",
+api                                                    "minimum": 0
+api                                                },
+api                                                "to": {
+api                                                    "type": [
+api                                                        "integer",
+api                                                        "null"
+api                                                    ],
+api                                                    "description": "Number of the last item in the slice.",
+api                                                    "minimum": 1
+api                                                },
+api                                                "total": {
+api                                                    "type": "integer",
+api                                                    "description": "Total number of items being paginated.",
+api                                                    "minimum": 0
+api                                                }
+api                                            },
+api                                            "required": [
+api                                                "current_page",
+api                                                "from",
+api                                                "last_page",
+api                                                "links",
+api                                                "path",
+api                                                "per_page",
+api                                                "to",
+api                                                "total"
+api                                            ]
+api                                        }
+api                                    },
+api                                    "required": [
+api                                        "data",
+api                                        "links",
+api                                        "meta"
+api                                    ]
+api                                }
+api                            }
+api                        }
+api                    }
+api                }
+api            },
+api            "post": {
+api                "operationId": "categories.store",
+api                "tags": [
+api                    "Category"
+api                ],
+api                "requestBody": {
+api                    "required": true,
+api                    "content": {
+api                        "application/json": {
+api                            "schema": {
+api                                "$ref": "#/components/schemas/StoreCategoryRequest"
+api                            }
+api                        }
+api                    }
+api                },
+api                "responses": {
+api                    "201": {
+api                        "description": "`CategoryResource`",
+api                        "content": {
+api                            "application/json": {
+api                                "schema": {
+api                                    "type": "object",
+api                                    "properties": {
+api                                        "data": {
+api                                            "$ref": "#/components/schemas/CategoryResource"
+api                                        }
+api                                    },
+api                                    "required": [
+api                                        "data"
+api                                    ]
+api                                }
+api                            }
+api                        }
+api                    },
+api                    "422": {
+api                        "$ref": "#/components/responses/ValidationException"
+api                    }
+api                }
+api            }
+api        },
+api        "/categories/{category}": {
+api            "get": {
+api                "operationId": "categories.show",
+api                "tags": [
+api                    "Category"
+api                ],
+api                "parameters": [
+api                    {
+api                        "name": "category",
+api                        "in": "path",
+api                        "required": true,
+api                        "description": "The category ID",
+api                        "schema": {
+api                            "type": "integer"
+api                        }
+api                    }
+api                ],
+api                "responses": {
+api                    "200": {
+api                        "description": "`CategoryResource`",
+api                        "content": {
+api                            "application/json": {
+api                                "schema": {
+api                                    "type": "object",
+api                                    "properties": {
+api                                        "data": {
+api                                            "$ref": "#/components/schemas/CategoryResource"
+api                                        }
+api                                    },
+api                                    "required": [
+api                                        "data"
+api                                    ]
+api                                }
+api                            }
+api                        }
+api                    },
+api                    "404": {
+api                        "$ref": "#/components/responses/ModelNotFoundException"
+api                    }
+api                }
+api            },
+api            "put": {
+api                "operationId": "categories.update",
+api                "tags": [
+api                    "Category"
+api                ],
+api                "parameters": [
+api                    {
+api                        "name": "category",
+api                        "in": "path",
+api                        "required": true,
+api                        "description": "The category ID",
+api                        "schema": {
+api                            "type": "integer"
+api                        }
+api                    }
+api                ],
+api                "requestBody": {
+api                    "content": {
+api                        "application/json": {
+api                            "schema": {
+api                                "$ref": "#/components/schemas/UpdateCategoryRequest"
+api                            }
+api                        }
+api                    }
+api                },
+api                "responses": {
+api                    "200": {
+api                        "description": "`CategoryResource`",
+api                        "content": {
+api                            "application/json": {
+api                                "schema": {
+api                                    "type": "object",
+api                                    "properties": {
+api                                        "data": {
+api                                            "$ref": "#/components/schemas/CategoryResource"
+api                                        }
+api                                    },
+api                                    "required": [
+api                                        "data"
+api                                    ]
+api                                }
+api                            }
+api                        }
+api                    },
+api                    "404": {
+api                        "$ref": "#/components/responses/ModelNotFoundException"
+api                    },
+api                    "422": {
+api                        "$ref": "#/components/responses/ValidationException"
+api                    }
+api                }
+api            },
+api            "delete": {
+api                "operationId": "categories.destroy",
+api                "tags": [
+api                    "Category"
+api                ],
+api                "parameters": [
+api                    {
+api                        "name": "category",
+api                        "in": "path",
+api                        "required": true,
+api                        "description": "The category ID",
+api                        "schema": {
+api                            "type": "integer"
+api                        }
+api                    }
+api                ],
+api                "responses": {
+api                    "204": {
+api                        "description": "No content"
+api                    },
+api                    "404": {
+api                        "$ref": "#/components/responses/ModelNotFoundException"
+api                    }
+api                }
+api            }
+api        },
+api        "/products": {
+api            "get": {
+api                "operationId": "products.index",
+api                "tags": [
+api                    "Product"
+api                ],
+api                "responses": {
+api                    "200": {
+api                        "description": "Paginated set of `ProductResource`",
+api                        "content": {
+api                            "application/json": {
+api                                "schema": {
+api                                    "type": "object",
+api                                    "properties": {
+api                                        "data": {
+api                                            "type": "array",
+api                                            "items": {
+api                                                "allOf": [
+api                                                    {
+api                                                        "$ref": "#/components/schemas/ProductResource"
+api                                                    },
+api                                                    {
+api                                                        "type": "object",
+api                                                        "required": [
+api                                                            "category_data"
+api                                                        ]
+api                                                    }
+api                                                ]
+api                                            }
+api                                        },
+api                                        "links": {
+api                                            "type": "object",
+api                                            "properties": {
+api                                                "first": {
+api                                                    "type": [
+api                                                        "string",
+api                                                        "null"
+api                                                    ]
+api                                                },
+api                                                "last": {
+api                                                    "type": [
+api                                                        "string",
+api                                                        "null"
+api                                                    ]
+api                                                },
+api                                                "prev": {
+api                                                    "type": [
+api                                                        "string",
+api                                                        "null"
+api                                                    ]
+api                                                },
+api                                                "next": {
+api                                                    "type": [
+api                                                        "string",
+api                                                        "null"
+api                                                    ]
+api                                                }
+api                                            },
+api                                            "required": [
+api                                                "first",
+api                                                "last",
+api                                                "prev",
+api                                                "next"
+api                                            ]
+api                                        },
+api                                        "meta": {
+api                                            "type": "object",
+api                                            "properties": {
+api                                                "current_page": {
+api                                                    "type": "integer",
+api                                                    "minimum": 1
+api                                                },
+api                                                "from": {
+api                                                    "type": [
+api                                                        "integer",
+api                                                        "null"
+api                                                    ],
+api                                                    "minimum": 1
+api                                                },
+api                                                "last_page": {
+api                                                    "type": "integer",
+api                                                    "minimum": 1
+api                                                },
+api                                                "links": {
+api                                                    "type": "array",
+api                                                    "description": "Generated paginator links.",
+api                                                    "items": {
+api                                                        "type": "object",
+api                                                        "properties": {
+api                                                            "url": {
+api                                                                "type": [
+api                                                                    "string",
+api                                                                    "null"
+api                                                                ]
+api                                                            },
+api                                                            "label": {
+api                                                                "type": "string"
+api                                                            },
+api                                                            "active": {
+api                                                                "type": "boolean"
+api                                                            }
+api                                                        },
+api                                                        "required": [
+api                                                            "url",
+api                                                            "label",
+api                                                            "active"
+api                                                        ]
+api                                                    }
+api                                                },
+api                                                "path": {
+api                                                    "type": [
+api                                                        "string",
+api                                                        "null"
+api                                                    ],
+api                                                    "description": "Base path for paginator generated URLs."
+api                                                },
+api                                                "per_page": {
+api                                                    "type": "integer",
+api                                                    "description": "Number of items shown per page.",
+api                                                    "minimum": 0
+api                                                },
+api                                                "to": {
+api                                                    "type": [
+api                                                        "integer",
+api                                                        "null"
+api                                                    ],
+api                                                    "description": "Number of the last item in the slice.",
+api                                                    "minimum": 1
+api                                                },
+api                                                "total": {
+api                                                    "type": "integer",
+api                                                    "description": "Total number of items being paginated.",
+api                                                    "minimum": 0
+api                                                }
+api                                            },
+api                                            "required": [
+api                                                "current_page",
+api                                                "from",
+api                                                "last_page",
+api                                                "links",
+api                                                "path",
+api                                                "per_page",
+api                                                "to",
+api                                                "total"
+api                                            ]
+api                                        }
+api                                    },
+api                                    "required": [
+api                                        "data",
+api                                        "links",
+api                                        "meta"
+api                                    ]
+api                                }
+api                            }
+api                        }
+api                    }
+api                }
+api            },
+api            "post": {
+api                "operationId": "products.store",
+api                "tags": [
+api                    "Product"
+api                ],
+api                "requestBody": {
+api                    "required": true,
+api                    "content": {
+api                        "application/json": {
+api                            "schema": {
+api                                "$ref": "#/components/schemas/StoreProductRequest"
+api                            }
+api                        }
+api                    }
+api                },
+api                "responses": {
+api                    "201": {
+api                        "description": "`ProductResource`",
+api                        "content": {
+api                            "application/json": {
+api                                "schema": {
+api                                    "type": "object",
+api                                    "properties": {
+api                                        "data": {
+api                                            "allOf": [
+api                                                {
+api                                                    "$ref": "#/components/schemas/ProductResource"
+api                                                },
+api                                                {
+api                                                    "type": "object",
+api                                                    "required": [
+api                                                        "category_data"
+api                                                    ]
+api                                                }
+api                                            ]
+api                                        }
+api                                    },
+api                                    "required": [
+api                                        "data"
+api                                    ]
+api                                }
+api                            }
+api                        }
+api                    },
+api                    "422": {
+api                        "$ref": "#/components/responses/ValidationException"
+api                    }
+api                }
+api            }
+api        },
+api        "/products/{product}": {
+api            "get": {
+api                "operationId": "products.show",
+api                "tags": [
+api                    "Product"
+api                ],
+api                "parameters": [
+api                    {
+api                        "name": "product",
+api                        "in": "path",
+api                        "required": true,
+api                        "description": "The product ID",
+api                        "schema": {
+api                            "type": "integer"
+api                        }
+api                    }
+api                ],
+api                "responses": {
+api                    "200": {
+api                        "description": "`ProductResource`",
+api                        "content": {
+api                            "application/json": {
+api                                "schema": {
+api                                    "type": "object",
+api                                    "properties": {
+api                                        "data": {
+api                                            "allOf": [
+api                                                {
+api                                                    "$ref": "#/components/schemas/ProductResource"
+api                                                },
+api                                                {
+api                                                    "type": "object",
+api                                                    "required": [
+api                                                        "category_data"
+api                                                    ]
+api                                                }
+api                                            ]
+api                                        }
+api                                    },
+api                                    "required": [
+api                                        "data"
+api                                    ]
+api                                }
+api                            }
+api                        }
+api                    },
+api                    "404": {
+api                        "$ref": "#/components/responses/ModelNotFoundException"
+api                    }
+api                }
+api            },
+api            "put": {
+api                "operationId": "products.update",
+api                "tags": [
+api                    "Product"
+api                ],
+api                "parameters": [
+api                    {
+api                        "name": "product",
+api                        "in": "path",
+api                        "required": true,
+api                        "description": "The product ID",
+api                        "schema": {
+api                            "type": "integer"
+api                        }
+api                    }
+api                ],
+api                "requestBody": {
+api                    "content": {
+api                        "application/json": {
+api                            "schema": {
+api                                "$ref": "#/components/schemas/UpdateProductRequest"
+api                            }
+api                        }
+api                    }
+api                },
+api                "responses": {
+api                    "200": {
+api                        "description": "`ProductResource`",
+api                        "content": {
+api                            "application/json": {
+api                                "schema": {
+api                                    "type": "object",
+api                                    "properties": {
+api                                        "data": {
+api                                            "allOf": [
+api                                                {
+api                                                    "$ref": "#/components/schemas/ProductResource"
+api                                                },
+api                                                {
+api                                                    "type": "object",
+api                                                    "required": [
+api                                                        "category_data"
+api                                                    ]
+api                                                }
+api                                            ]
+api                                        }
+api                                    },
+api                                    "required": [
+api                                        "data"
+api                                    ]
+api                                }
+api                            }
+api                        }
+api                    },
+api                    "404": {
+api                        "$ref": "#/components/responses/ModelNotFoundException"
+api                    },
+api                    "422": {
+api                        "$ref": "#/components/responses/ValidationException"
+api                    }
+api                }
+api            },
+api            "delete": {
+api                "operationId": "products.destroy",
+api                "tags": [
+api                    "Product"
+api                ],
+api                "parameters": [
+api                    {
+api                        "name": "product",
+api                        "in": "path",
+api                        "required": true,
+api                        "description": "The product ID",
+api                        "schema": {
+api                            "type": "integer"
+api                        }
+api                    }
+api                ],
+api                "responses": {
+api                    "204": {
+api                        "description": "No content"
+api                    },
+api                    "404": {
+api                        "$ref": "#/components/responses/ModelNotFoundException"
+api                    }
+api                }
+api            }
+api        }
+api    },
+api    "components": {
+api        "schemas": {
+api            "CategoryResource": {
+api                "type": "object",
+api                "properties": {
+api                    "id": {
+api                        "type": "integer"
+api                    },
+api                    "name": {
+api                        "type": "string"
+api                    },
+api                    "slug": {
+api                        "type": "string"
+api                    },
+api                    "created_at": {
+api                        "type": [
+api                            "string",
+api                            "null"
+api                        ]
+api                    },
+api                    "updated_at": {
+api                        "type": [
+api                            "string",
+api                            "null"
+api                        ]
+api                    }
+api                },
+api                "required": [
+api                    "id",
+api                    "name",
+api                    "slug",
+api                    "created_at",
+api                    "updated_at"
+api                ],
+api                "title": "CategoryResource"
+api            },
+api            "ProductResource": {
+api                "type": "object",
+api                "properties": {
+api                    "id": {
+api                        "type": "integer"
+api                    },
+api                    "slug": {
+api                        "type": "string"
+api                    },
+api                    "title": {
+api                        "type": "string"
+api                    },
+api                    "category": {
+api                        "type": "string"
+api                    },
+api                    "category_id": {
+api                        "type": "integer"
+api                    },
+api                    "category_data": {
+api                        "$ref": "#/components/schemas/CategoryResource"
+api                    },
+api                    "operation": {
+api                        "type": "string"
+api                    },
+api                    "price": {
+api                        "type": "string"
+api                    },
+api                    "currency": {
+api                        "type": "string"
+api                    },
+api                    "short_description": {
+api                        "type": "string"
+api                    },
+api                    "description": {
+api                        "type": "string"
+api                    },
+api                    "image_url": {
+api                        "type": "string"
+api                    },
+api                    "contact_name": {
+api                        "type": "string"
+api                    },
+api                    "contact_phone": {
+api                        "type": "string"
+api                    },
+api                    "contact_email": {
+api                        "type": "string"
+api                    },
+api                    "status": {
+api                        "type": "string"
+api                    },
+api                    "published_at": {
+api                        "type": "string"
+api                    },
+api                    "attributes": {
+api                        "type": "string"
+api                    }
+api                },
+api                "required": [
+api                    "id",
+api                    "slug",
+api                    "title",
+api                    "category",
+api                    "category_id",
+api                    "operation",
+api                    "price",
+api                    "currency",
+api                    "short_description",
+api                    "description",
+api                    "image_url",
+api                    "contact_name",
+api                    "contact_phone",
+api                    "contact_email",
+api                    "status",
+api                    "published_at",
+api                    "attributes"
+api                ],
+api                "title": "ProductResource"
+api            },
+api            "StoreCategoryRequest": {
+api                "type": "object",
+api                "properties": {
+api                    "name": {
+api                        "type": "string",
+api                        "maxLength": 80
+api                    },
+api                    "slug": {
+api                        "type": "string",
+api                        "maxLength": 255
+api                    }
+api                },
+api                "required": [
+api                    "name",
+api                    "slug"
+api                ],
+api                "title": "StoreCategoryRequest"
+api            },
+api            "StoreProductRequest": {
+api                "type": "object",
+api                "properties": {
+api                    "title": {
+api                        "type": "string",
+api                        "maxLength": 120
+api                    },
+api                    "slug": {
+api                        "type": "string",
+api                        "maxLength": 255
+api                    },
+api                    "category_id": {
+api                        "type": "integer"
+api                    },
+api                    "price": {
+api                        "type": "number"
+api                    },
+api                    "operation": {
+api                        "type": "string",
+api                        "enum": [
+api                            "\u041f\u0440\u043e\u0434\u0430\u0436"
+api                        ]
+api                    },
+api                    "currency": {
+api                        "type": "string",
+api                        "maxLength": 10
+api                    },
+api                    "short_description": {
+api                        "type": [
+api                            "string",
+api                            "null"
+api                        ],
+api                        "maxLength": 255
+api                    },
+api                    "description": {
+api                        "type": [
+api                            "string",
+api                            "null"
+api                        ]
+api                    },
+api                    "image": {
+api                        "type": [
+api                            "string",
+api                            "null"
+api                        ]
+api                    },
+api                    "contact_name": {
+api                        "type": [
+api                            "string",
+api                            "null"
+api                        ]
+api                    },
+api                    "contact_phone": {
+api                        "type": [
+api                            "string",
+api                            "null"
+api                        ],
+api                        "maxLength": 32
+api                    },
+api                    "contact_email": {
+api                        "type": [
+api                            "string",
+api                            "null"
+api                        ],
+api                        "format": "email"
+api                    },
+api                    "status": {
+api                        "type": [
+api                            "string",
+api                            "null"
+api                        ],
+api                        "maxLength": 40
+api                    },
+api                    "published_at": {
+api                        "type": [
+api                            "string",
+api                            "null"
+api                        ],
+api                        "format": "date-time"
+api                    },
+api                    "attributes": {
+api                        "type": "array",
+api                        "items": {
+api                            "type": "string"
+api                        }
+api                    }
+api                },
+api                "required": [
+api                    "title",
+api                    "slug",
+api                    "category_id",
+api                    "price"
+api                ],
+api                "title": "StoreProductRequest"
+api            },
+api            "UpdateCategoryRequest": {
+api                "type": "object",
+api                "properties": {
+api                    "name": {
+api                        "type": "string",
+api                        "maxLength": 80
+api                    },
+api                    "slug": {
+api                        "type": "string",
+api                        "maxLength": 255
+api                    }
+api                },
+api                "title": "UpdateCategoryRequest"
+api            },
+api            "UpdateProductRequest": {
+api                "type": "object",
+api                "properties": {
+api                    "title": {
+api                        "type": "string",
+api                        "maxLength": 120
+api                    },
+api                    "slug": {
+api                        "type": "string",
+api                        "maxLength": 255
+api                    },
+api                    "category_id": {
+api                        "type": "integer"
+api                    },
+api                    "price": {
+api                        "type": "number"
+api                    },
+api                    "operation": {
+api                        "type": "string",
+api                        "enum": [
+api                            "\u041f\u0440\u043e\u0434\u0430\u0436"
+api                        ]
+api                    },
+api                    "currency": {
+api                        "type": "string",
+api                        "maxLength": 10
+api                    },
+api                    "short_description": {
+api                        "type": [
+api                            "string",
+api                            "null"
+api                        ],
+api                        "maxLength": 255
+api                    },
+api                    "description": {
+api                        "type": [
+api                            "string",
+api                            "null"
+api                        ]
+api                    },
+api                    "image": {
+api                        "type": [
+api                            "string",
+api                            "null"
+api                        ]
+api                    },
+api                    "contact_name": {
+api                        "type": [
+api                            "string",
+api                            "null"
+api                        ]
+api                    },
+api                    "contact_phone": {
+api                        "type": [
+api                            "string",
+api                            "null"
+api                        ],
+api                        "maxLength": 32
+api                    },
+api                    "contact_email": {
+api                        "type": [
+api                            "string",
+api                            "null"
+api                        ],
+api                        "format": "email"
+api                    },
+api                    "status": {
+api                        "type": [
+api                            "string",
+api                            "null"
+api                        ],
+api                        "maxLength": 40
+api                    },
+api                    "published_at": {
+api                        "type": [
+api                            "string",
+api                            "null"
+api                        ],
+api                        "format": "date-time"
+api                    },
+api                    "attributes": {
+api                        "type": "array",
+api                        "items": {
+api                            "type": "string"
+api                        }
+api                    }
+api                },
+api                "title": "UpdateProductRequest"
+api            }
+api        },
+api        "responses": {
+api            "ValidationException": {
+api                "description": "Validation error",
+api                "content": {
+api                    "application/json": {
+api                        "schema": {
+api                            "type": "object",
+api                            "properties": {
+api                                "message": {
+api                                    "type": "string",
+api                                    "description": "Errors overview."
+api                                },
+api                                "errors": {
+api                                    "type": "object",
+api                                    "description": "A detailed description of each field that failed validation.",
+api                                    "additionalProperties": {
+api                                        "type": "array",
+api                                        "items": {
+api                                            "type": "string"
+api                                        }
+api                                    }
+api                                }
+api                            },
+api                            "required": [
+api                                "message",
+api                                "errors"
+api                            ]
+api                        }
+api                    }
+api                }
+api            },
+api            "ModelNotFoundException": {
+api                "description": "Not found",
+api                "content": {
+api                    "application/json": {
+api                        "schema": {
+api                            "type": "object",
+api                            "properties": {
+api                                "message": {
+api                                    "type": "string",
+api                                    "description": "Error overview."
+api                                }
+api                            },
+api                            "required": [
+api                                "message"
+api                            ]
+api                        }
+api                    }
+api                }
+api            }
+api        }
+api    }
+api}
